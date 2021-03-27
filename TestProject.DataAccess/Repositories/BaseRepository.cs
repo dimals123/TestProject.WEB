@@ -38,5 +38,10 @@ namespace TestProject.DataAccess.Repositories
             _context.Entry(item).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
+
+        public virtual async Task<T> GetById(int id)
+        {
+            return await _dbSet.FindAsync(id);
+        }
     }
 }

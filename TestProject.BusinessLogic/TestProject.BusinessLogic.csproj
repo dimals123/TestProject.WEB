@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestProject.DataAccess\TestProject.DataAccess.csproj" />
+    <ProjectReference Include="..\TestProject.ViewModels\TestProject.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

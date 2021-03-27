@@ -9,5 +9,6 @@ namespace TestProject.DataAccess.Repositories.Interfaces
         Task Create(T item);
         Task Update(T item);
         Task Delete(T item);
+        Task<T> GetById(int id);
     }
 }
