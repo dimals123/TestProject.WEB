@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Список пользователей</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form name="taskForm">
+                        <div class="form-group col-md-5">
+                            <label for="name">Имя:</label>
+                            <input class="form-control" name="name" />
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="description">Описание:</label>
+                            <textarea class="form-control" name="description" type="text"></textarea>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <label for="employee">ФИО:</label>
+                            <input class="form-control" name="employee" type="text" />
+                        </div>
+                        <div class="panel-body">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                <a type="submit" id="submit" class="btn btn-primary" data-dismiss="modal" onclick="submit()">Сохранить</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h2>Список тасков</h2>
+    <table class="table table-condensed table-striped  col-md-6">
+        <thead><tr><th>Id</th><th>Имя</th><th>Описание</th><th>ФИО</th><th></th></tr></thead>
+        <tbody>
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Создать Таск
+    </button>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        async function GetUsers() {
+            const response = await fetch("/api/home", {
+                method: "GET",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                const employeeTasks = await response.json();
+                let rows = document.querySelector("tbody");
+                employeeTasks.employeeTasks.forEach(task => {
+                    rows.append(row(task));
+                });
+            }
+        }
+        async function Create(name, description, employee) {
+            const response = await fetch("api/home/create", {
+                method: "POST",
+                headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: name,
+                    description: description,
+                    employee: employee
+                })
+            });
+            if (response.ok === true) {
+                const task = await response.json();
+                reset();
+                document.querySelector("tbody").append(row(task));
+            }
+        }
+
+        async function Finish(taskId) {
+            const response = await fetch("api/home/finish/" + taskId, {
+                method: "POST",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                document.querySelector("tr[data-rowid='" + taskId + "']").style.backgroundColor = "green";
+            }
+        }
+        async function DeleteUser(taskId) {
+            const response = await fetch("/api/home/delete/" + taskId, {
+                method: "POST",
+                headers: { "Accept": "application/json" }
+            });
+            if (response.ok === true) {
+                document.querySelector("tr[data-rowid='" + taskId + "']").remove();
+            }
+        }
+
+        function row(task) {
+
+            const tr = document.createElement("tr");
+            tr.setAttribute("data-rowid", task.id);
+
+            const id = document.createElement("td");
+            id.append(task.id);
+            tr.append(id);
+
+            const name = document.createElement("td");
+            name.append(task.name);
+            tr.append(name);
+
+            const description = document.createElement("td");
+            description.append(task.description);
+            tr.append(description);
+
+            const employee = document.createElement("td");
+            employee.append(task.employee);
+            tr.append(employee);
+            const links = document.createElement("td");
+            if (task.finished == 1) {
+                tr.style.backgroundColor = "green";
+            }
+            else if (task.finished == 0) {
+                const finishLink = document.createElement("a");
+                finishLink.setAttribute("data-id", task.id);
+                finishLink.setAttribute("style", "cursor:pointer;padding:15px;");
+
+                finishLink.append("Выполнить");
+
+                finishLink.addEventListener("click", e => {
+                    Finish(task.id);
+                    e.preventDefault();
+                });
+                links.append(finishLink);
+            }
+            const removeLink = document.createElement("a");
+            removeLink.setAttribute("data-id", task.id);
+            removeLink.setAttribute("style", "cursor:pointer;padding:15px;");
+            removeLink.append("Удалить");
+            removeLink.addEventListener("click", e => {
+
+                e.preventDefault();
+                DeleteUser(task.id);
+            });
+
+            links.append(removeLink);
+            tr.appendChild(links);
+
+            return tr;
+        }
+        function reset() {
+            const form = document.forms["taskForm"];
+            form.reset();
+        }
+        function submit() {
+            const form = document.forms["taskForm"];
+            const name = form.elements["name"].value;
+            const description = form.elements["description"].value;
+            const employee = form.elements["employee"].value;
+            Create(name, description, employee);
+        }
+
+        GetUsers();
+
+    </script>
+</body>
+</html>

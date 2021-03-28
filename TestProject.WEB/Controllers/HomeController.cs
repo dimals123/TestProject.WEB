@@ -5,6 +5,8 @@ using TestProject.ViewModels.EmployeeTaskViews;
 
 namespace TestProject.WEB.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]/")]
     public class HomeController : Controller
     {
 
@@ -17,29 +19,32 @@ namespace TestProject.WEB.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = await _employeeTaskService.GetAll();
-            return View(model);
+            var respone = await _employeeTaskService.GetAll();
+            return Ok(respone);
         }
 
         [HttpPost]
+        [Route("create")]
         public async Task<IActionResult> Create(CreateEmployeeTaskRequestView model)
         {
-            await _employeeTaskService.Create(model);
-            return View();
+            var respone = await _employeeTaskService.Create(model);
+            return Ok(respone);
         }
 
         [HttpPost]
+        [Route("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _employeeTaskService.Delete(id);
-            return View();
+            return Ok();
         }
 
         [HttpPost]
+        [Route("finish/{id}")]
         public async Task<IActionResult> Finish(int id)
         {
             await _employeeTaskService.Finish(id);
-            return View();
+            return Ok();
         }
     }
 }

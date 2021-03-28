@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using TestProject.BusinessLogic.Services.Interfaces;
 using TestProject.DataAccess.Entities;
@@ -16,15 +17,25 @@ namespace TestProject.BusinessLogic.Services
             _employeeTaskRepository = employeeTaskRepository;
         }
 
-        public async Task Create(CreateEmployeeTaskRequestView model)
+        public async Task<CreateEmployeeTaskResponseView> Create(CreateEmployeeTaskRequestView model)
         {
-            var newEmployeeTask = new EmployeeTask() {
+            var employeeTask = new EmployeeTask() {
                 Name = model.Name,
                 Description = model.Description,
                 Employee = model.Employee
             };
 
-            await _employeeTaskRepository.Create(newEmployeeTask);
+            var newEmployeeTask = await _employeeTaskRepository.Create(employeeTask);
+            var result = new CreateEmployeeTaskResponseView()
+            {
+                Id = newEmployeeTask.Id,
+                Name = newEmployeeTask.Name,
+                Description = newEmployeeTask.Description,
+                Employee = newEmployeeTask.Employee,
+                Finished = newEmployeeTask.Finished
+            };
+
+            return result;
         }
 
         public async Task Delete(int id)
@@ -32,7 +43,7 @@ namespace TestProject.BusinessLogic.Services
             var employeeTask = await _employeeTaskRepository.GetById(id);
             if (employeeTask == null)
             {
-                return;
+                throw new Exception();
             }
             await _employeeTaskRepository.Delete(employeeTask);
         }
@@ -43,7 +54,7 @@ namespace TestProject.BusinessLogic.Services
 
             if(employeeTask == null)
             {
-                return;
+                throw new Exception();
             }
 
             employeeTask.Finished = !employeeTask.Finished;
@@ -60,7 +71,8 @@ namespace TestProject.BusinessLogic.Services
                     Description = x.Description,
                     Employee = x.Employee,
                     Name = x.Name,
-                    Id = x.Id
+                    Id = x.Id,
+                    Finished = x.Finished
                 }).ToList()
             };
 

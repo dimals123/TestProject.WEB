@@ -6,7 +6,7 @@ namespace TestProject.DataAccess.Repositories.Interfaces
     public interface IBaseRepository<T> where T: class
     {
         Task<List<T>> GetAll();
-        Task Create(T item);
+        Task<T> Create(T item);
         Task Update(T item);
         Task Delete(T item);
         Task<T> GetById(int id);

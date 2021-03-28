@@ -18,8 +18,9 @@ namespace TestProject.WEB
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddControllers();
             services.DependencyInjectionConnectionConfig(Configuration);
+            services.DependencyInjectionServicesConfig();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -29,13 +30,14 @@ namespace TestProject.WEB
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
             });
         }
     }
