@@ -35,6 +35,7 @@ async function Finish(taskId) {
     });
     if (response.ok === true) {
         document.querySelector("tr[data-rowid='" + taskId + "']").style.backgroundColor = "green";
+        document.querySelector("a[data-id='" + taskId + "']").remove();
     }
 }
 async function DeleteUser(taskId) {
