@@ -1,4 +1,4 @@
-﻿async function GetUsers() {
+﻿async function GetTasks() {
     const response = await fetch("/api/home", {
         method: "GET",
         headers: { "Accept": "application/json" }
@@ -112,4 +112,4 @@ function submit() {
     Create(name, description, employee);
 }
 
-GetUsers();
+GetTasks();
