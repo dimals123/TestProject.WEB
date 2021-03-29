@@ -15,11 +15,10 @@ namespace TestProject.DataAccess.Repositories
             _context = context;
             _dbSet = context.Set<T>();
         }
-        public virtual async Task<T> Create(T item)
+        public virtual async Task Create(T item)
         {
-            var result = await _dbSet.AddAsync(item);
+            await _dbSet.AddAsync(item);
             await _context.SaveChangesAsync();
-            return result.Entity;
         }
 
         public virtual async Task Delete(T item)
