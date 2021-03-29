@@ -7,10 +7,10 @@ namespace TestProject.DataAccess.Repositories
 {
     public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        protected DbContext _context;
+        protected TestProjectContext _context;
         protected DbSet<T> _dbSet;
 
-        public BaseRepository(DbContext context)
+        public BaseRepository(TestProjectContext context)
         {
             _context = context;
             _dbSet = context.Set<T>();

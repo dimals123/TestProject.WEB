@@ -21,7 +21,6 @@ namespace TestProject.BusinessLogic.Configurations
         {
             services.AddTransient<IEmployeeTaskRepository, EmployeeTaskRepository>();
             services.AddTransient<IEmployeeTaskService, EmployeeTaskService>();
-            services.AddScoped<DbContext, TestProjectContext>();
         }
     }
 }

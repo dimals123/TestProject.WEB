@@ -7,7 +7,7 @@ namespace TestProject.DataAccess.Repositories
 {
     public class EmployeeTaskRepository : BaseRepository<EmployeeTask>, IEmployeeTaskRepository
     {
-        public EmployeeTaskRepository(DbContext context) : base(context)
+        public EmployeeTaskRepository(TestProjectContext context) : base(context)
         {
         }
 
